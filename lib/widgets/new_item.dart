@@ -14,7 +14,12 @@ class _NewItemState extends State<NewItem> {
       appBar: AppBar(
         title: const Text('Add new item'),
       ),
-      body: const Text('New Item Form'),
+      body: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Form(
+          child: ListView(),
+        ),
+      ),
     );
   }
 }
