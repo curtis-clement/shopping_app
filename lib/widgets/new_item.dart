@@ -45,20 +45,34 @@ class _NewItemState extends State<NewItem> {
                     child: DropdownButtonFormField(items: [
                       for (final category in categories.entries)
                         DropdownMenuItem(
-                        value: category.value,
-                        child: Row(
-                          children: [
-                            Container(
-                              width: 16,
-                              height: 16,
-                              color: category.value.color,
-                            ),
-                            const SizedBox(width: 6),
-                            Text(category.value.title),
+                          value: category.value,
+                          child: Row(
+                            children: [
+                              Container(
+                                width: 16,
+                                height: 16,
+                                color: category.value.color,
+                              ),
+                              const SizedBox(width: 6),
+                              Text(category.value.title),
                             ],
                           ),
                         ),
                     ], onChanged: (value) {}),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  TextButton(
+                    onPressed: () {},
+                    child: const Text('Cancel'),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {},
+                    child: const Text('Add item'),
                   ),
                 ],
               ),
