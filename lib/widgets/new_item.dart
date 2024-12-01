@@ -26,7 +26,15 @@ class _NewItemState extends State<NewItem> {
                   label: Text('Name'),
                 ),
                 validator: (value) {
-                  return 'Must not be empty';
+                  if (
+                      value == null ||
+                      value.isEmpty ||
+                      value.trim().length <= 1 ||
+                      value.trim().length > 50
+                    ) {
+                    return 'Please enter a valid name between 1 and 50 characters';
+                  }
+                  return null;
                 },
               ),
               Row(
@@ -38,6 +46,17 @@ class _NewItemState extends State<NewItem> {
                         label: Text('Quantity'),
                       ),
                       initialValue: '1',
+                      validator: (value) {
+                        if (
+                            value == null ||
+                            value.isEmpty ||
+                            int.tryParse(value) == null ||
+                            int.tryParse(value)! <= 0
+                        ) {
+                          return 'Please enter a valid positive number';
+                        }
+                        return null;
+                    },
                     ),
                   ),
                   const SizedBox(width: 8),
@@ -68,7 +87,7 @@ class _NewItemState extends State<NewItem> {
                 children: [
                   TextButton(
                     onPressed: () {},
-                    child: const Text('Cancel'),
+                    child: const Text('Clear'),
                   ),
                   ElevatedButton(
                     onPressed: () {},
