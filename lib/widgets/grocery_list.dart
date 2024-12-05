@@ -15,10 +15,18 @@ class GroceryList extends StatefulWidget {
 class _GroceryListState extends State<GroceryList> {
   List<GroceryItem> _groceryItems = [];
   var _isLoading = true;
+  String? _error;
 
   Future<void> _fetchItems() async {
     final url = Uri.https('flutter-shopping-app-af420-default-rtdb.europe-west1.firebasedatabase.app', 'shopping_list.json');
     final response = await http.get(url);
+
+    if (response.statusCode >= 400) {
+      setState(() {
+        _error = 'Fetching data failed...';
+      });
+      return;
+    }
     
     final Map<String, dynamic> listData = json.decode(response.body);
     final List<GroceryItem> loadedItems = [];
@@ -54,6 +62,22 @@ class _GroceryListState extends State<GroceryList> {
     });
   }
 
+  void _removeItem(int index) async {
+    setState(() {
+      _groceryItems.removeAt(index);
+    });
+
+    final url = Uri.https('flutter-shopping-app-af420-default-rtdb.europe-west1.firebasedatabase.app', 'shopping_list/${_groceryItems[index].id}.json');
+    final response = await http.delete(url);
+
+    if (response.statusCode >= 400) {
+      _error = 'Removing item failed...';
+      setState(() {
+        _groceryItems.insert(index, _groceryItems[index]);
+      });
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -74,9 +98,7 @@ class _GroceryListState extends State<GroceryList> {
         itemBuilder: (context, index) => Dismissible(
           key: ValueKey(_groceryItems[index].id),
           onDismissed: (direction) {
-            setState(() {
-              _groceryItems.removeAt(index);
-            });
+            _removeItem(index);
           },
           child: ListTile(
             title: Text(_groceryItems[index].name),
@@ -89,6 +111,10 @@ class _GroceryListState extends State<GroceryList> {
           ),
         ),
       );
+    }
+
+    if (_error != null) {
+      content = Center(child: Text(_error!));
     }
 
     return Scaffold(
