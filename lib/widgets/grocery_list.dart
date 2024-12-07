@@ -19,15 +19,24 @@ class _GroceryListState extends State<GroceryList> {
 
   Future<void> _fetchItems() async {
     final url = Uri.https('flutter-shopping-app-af420-default-rtdb.europe-west1.firebasedatabase.app', 'shopping_list.json');
-    final response = await http.get(url);
 
-    if (response.statusCode >= 400) {
+    try {
+      final response = await http.get(url);
+
+      if (response.statusCode >= 400) {
       setState(() {
         _error = 'Fetching data failed...';
       });
       return;
     }
-    
+
+    if (response.body == 'null') {
+      setState(() {
+        _isLoading = false;
+      });
+      return;
+    }
+
     final Map<String, dynamic> listData = json.decode(response.body);
     final List<GroceryItem> loadedItems = [];
     for (final item in listData.entries) {
@@ -42,8 +51,14 @@ class _GroceryListState extends State<GroceryList> {
 
     setState(() {
       _groceryItems = loadedItems;
-      _isLoading = false;
-    });
+        _isLoading = false;
+      });
+    } catch (error) {
+      setState(() {
+        _error = 'Something went wrong! Please try again.';
+      });
+      return;
+    }
   }
 
   void _addItem() async {
